@@ -50,4 +50,11 @@ write.csv(x_train, "x_train_median.csv", row.names = FALSE)
 write.csv(x_test, "x_test_median.csv", row.names = FALSE)
 
 
-######################################################################################
+#######################################################################################
+
+
+#By frequency
+
+#NOT SUITABLE FOR THESE DATA SETS AS VALUES ARE double with sometimes more than 5 decimals.
+#Maybe we could round all data to the closest integer and then choose the most frequent integer
+
