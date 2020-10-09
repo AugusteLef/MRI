@@ -58,3 +58,35 @@ write.csv(x_test, "x_test_median.csv", row.names = FALSE)
 #NOT SUITABLE FOR THESE DATA SETS AS VALUES ARE double with sometimes more than 5 decimals.
 #Maybe we could round all data to the closest integer and then choose the most frequent integer
 
+
+#######################################################################################
+
+#Hot deck imputation method (Nearest neighbor hot deck imputation) ALLOWED ?
+
+update.packages()
+
+install.packages("VIM")
+library(VIM)
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("impute")
+
+#Using impute package
+
+#KNN-imputation on x_train
+x_train = read.csv("X_train.csv") #read the file
+x_train_knned <- impute::impute.knn(as.matrix(x_train))
+x_train <- x_train_knned[["data"]]
+x_train
+
+#KNN-imputation on x_test
+x_test = read.csv("X_test.csv") #read the file
+x_test_knned <- impute::impute.knn(as.matrix(x_test))
+x_test <- x_test_knned[["data"]]
+x_test
+
+#write to csv
+write.csv(x_train, "x_train_KNN.csv", row.names = FALSE)
+write.csv(x_test, "x_test_KNN.csv", row.names = FALSE)
