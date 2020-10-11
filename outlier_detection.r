@@ -153,8 +153,92 @@ write.csv(x_train, "x_train_mean_hampel.csv", row.names = FALSE)
 write.csv(x_test, "x_test_mean_hampel.csv", row.names = FALSE)
 
 
+########################################### ISOLATION FOREST #######################################################
+# IsolationForest Method
+install.packages("solitude")
+library(solitude)
+x_train = read.csv("x_train_mean.csv")
+
+n = 1000
+Var1 = c(rnorm(n, 0, 0.5), rnorm(n*0.1, -2, 1))
+Var2 = c(rnorm(n, 0, 0.5), rnorm(n*0.1,  2, 1))
+outliers = c(rep(0, n), rep(1, (0.1*n))) + 3
+data = data.frame(Var1, Var2)
+iforest <- solitude::isolationForest$new(sample_size = length(data))
+iforest$fit(data)
+data 
+
+############################################# DBSCan ########################################################
+install.packages("ggplot2")
+install.packages("data.table")
+install.packages("dbscan")
+library(ggplot2)
+library(data.table)
+library(dbscan)
+
+
+x_train <- read.csv("x_train_mean.csv")
+x_scale <- apply(x_train, 2, function(y) (y - mean(y)) / sd(y) ^ as.logical(sd(y)))
+print(sum(is.na(x_train)))
+
+
+distance_matrix <- as.matrix(dist(x_scale))
+pca <- prcomp(distance_matrix)
+embedding <- data.table(pca$x[, 1:2])
+embedding[, ids := rownames(x_train)]
+ggplot(embedding, aes(x = PC1, y = PC2)) +
+  geom_point(size = 10, colour = "steelblue", alpha = 0.3) +
+  geom_text(aes(label = ids), check_overlap = TRUE) +
+  theme_minimal()
+
+
+embedding[, DClusters := dbscan(x_scale, eps = 0.2, minPts = 2)$cluster]
+ggplot(embedding, aes(x = PC1, y = PC2)) +
+  geom_point(aes(colour = factor(DClusters)), size = 10, alpha = 0.3) +
+  geom_text(aes(label = ids), check_overlap = TRUE) +
+  theme_minimal()
+
+
+################################### EXPECTATION MAXIMISATION ###############################
+
+install.packages("ggplot2")
+install.packages("data.table")
+install.packages("mclust")
+library(ggplot2)
+library(data.table)
+library(mclust)
+
+x_train <- read.csv("x_train_mean.csv")
+x_scale <- apply(x_train, 2, function(y) (y - mean(y)) / sd(y) ^ as.logical(sd(y)))
+print(sum(is.na(x_train)))
+
+
+distance_matrix <- as.matrix(dist(x_scale))
+pca <- prcomp(distance_matrix)
+embedding <- data.table(pca$x[, 1:2])
+embedding[, ids := rownames(x_train)]
+ggplot(embedding, aes(x = PC1, y = PC2)) +
+  geom_point(size = 10, colour = "steelblue", alpha = 0.3) +
+  geom_text(aes(label = ids), check_overlap = TRUE) +
+  theme_minimal()
 
 
 
+cars_em <- Mclust(scale(x_train), G = 4)
+embedding[, EMClusters := cars_em$classification]
+ggplot(embedding, aes(x = PC1, y = PC2)) +
+  geom_point(aes(colour = factor(EMClusters)), size = 10, alpha = 0.3) +
+  geom_text(aes(label = ids), check_overlap = TRUE) +
+  theme_minimal()
+
+
+################################### PCOutlierDetecton ######################################
+
+install.packages("OutlierDetection")
+library(OutlierDetection)
+
+x_train <- read.csv("x_train_mean.csv")
+
+outdetect <- PCOutlierDetection(x_train[,2])
 
 
