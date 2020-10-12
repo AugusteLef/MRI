@@ -1,6 +1,6 @@
 x_train <- read.csv("X_train.csv")
 y_train <- read.csv("y_train.csv")
-outl <- (read.csv("outlier_isolationforest_results.csv"))
+outl <- (read.csv("features_trainNO.csv"))
 
 # GET INDEX of the OUTLIER
 index <- c()
